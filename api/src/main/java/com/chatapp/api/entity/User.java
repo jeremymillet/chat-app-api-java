@@ -43,4 +43,7 @@ public class User {
     @Column(name="profile_picture",nullable = true)
     private String profilePicture;
 
+    @Column(name="profile_picture_public_id",nullable = true)
+    private String profilePicturePublicId;
+
 }

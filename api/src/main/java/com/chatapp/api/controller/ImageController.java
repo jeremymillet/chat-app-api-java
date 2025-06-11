@@ -13,16 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.chatapp.api.service.CloudinaryService;
-import com.chatapp.api.service.UserService;
+
 
 @RestController
 @RequestMapping("/images")
 public class ImageController {
 
     private final CloudinaryService cloudinaryService;
-
-    @Autowired
-    private UserService userService;
 
     public ImageController(CloudinaryService cloudinaryService) {
         this.cloudinaryService = cloudinaryService;
@@ -31,8 +28,7 @@ public class ImageController {
     @PostMapping("/upload/{userId}")
     public ResponseEntity<String> uploadImage(@PathVariable Long userId,@RequestParam("file") MultipartFile file) {
         try {
-            String imageUrl = cloudinaryService.uploadImage(file);
-            userService.updateImgByUserId(userId, imageUrl);
+            cloudinaryService.uploadImage(userId,file);
             return ResponseEntity.ok("Image uploaded successfully");
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

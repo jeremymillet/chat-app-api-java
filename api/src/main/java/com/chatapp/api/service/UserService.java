@@ -10,6 +10,8 @@ import com.chatapp.api.dto.UserDTO;
 import com.chatapp.api.entity.User;
 import com.chatapp.api.repository.UserRepository;
 
+import jakarta.transaction.Transactional;
+
 
 @Service
 public class UserService {
@@ -22,18 +24,11 @@ public class UserService {
         return convertToUserDTO(user);
     }
 
+    @Transactional
     public void editUser(Long id, String username, String description) {
         userRepository.patchProfile(id,username,description);
     }
     
-    public void updateImgByUserId(Long userId, String imageUrl) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            user.get().setProfilePicture(imageUrl);
-            userRepository.save(user.get());
-        }
-    }
-
     public UserDTO createUser(User user) {
         return convertToUserDTO(userRepository.save(user));
     }

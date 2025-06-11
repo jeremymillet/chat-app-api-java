@@ -1,5 +1,8 @@
 package com.chatapp.api.controller;
 
+import java.util.Collections;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,9 +29,13 @@ public class UserController {
         UserDTO userDTO = userService.getUserById(userId);
         return ResponseEntity.ok(userDTO);
     }
+    
     @PatchMapping("/{userId}")
-    public ResponseEntity<String> patchUserProfil(@PathVariable Long id, @RequestBody EditProfilRequest body) {
-        userService.editUser(id,body.getUsername(),body.getDescription());
-        return ResponseEntity.ok("User updated successfully");
+    public ResponseEntity<Map<String, String>> patchUserProfil(@PathVariable Long userId,
+            @RequestBody EditProfilRequest body) {
+        System.out.println(body);
+        userService.editUser(userId, body.getUsername(), body.getDescription());
+        Map<String, String> response = Collections.singletonMap("message", "User updated successfully");
+        return ResponseEntity.ok(response);
     }
 }

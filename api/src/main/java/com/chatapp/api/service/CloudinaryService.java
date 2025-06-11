@@ -1,9 +1,11 @@
 package com.chatapp.api.service;
 
+import com.chatapp.api.entity.User;
+import com.chatapp.api.repository.UserRepository;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -12,8 +14,13 @@ import java.io.IOException;
 import java.util.Map;
 
 
+
 @Service
 public class CloudinaryService {
+
+    @Autowired
+    private UserRepository userRepository;
+
     private final Cloudinary cloudinary;
 
     public CloudinaryService(
@@ -28,8 +35,21 @@ public class CloudinaryService {
                 "api_secret", apiSecret));
     }
 
-    public String uploadImage(MultipartFile file) throws IOException {
+    public User uploadImage(Long userId, MultipartFile file) throws IOException {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String oldPublicId = user.getProfilePicturePublicId(); // Peut être null
         Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
-        return uploadResult.get("url").toString(); // Retourne l’URL de l’image stockée
+
+        // Supprimer l'ancienne image
+        if (oldPublicId != null) {
+            cloudinary.uploader().destroy(oldPublicId, ObjectUtils.emptyMap());
+        }
+
+        user.setProfilePicture(uploadResult.get("url").toString());
+        user.setProfilePicturePublicId(uploadResult.get("public_id").toString());
+
+        return userRepository.save(user);
     }
 }

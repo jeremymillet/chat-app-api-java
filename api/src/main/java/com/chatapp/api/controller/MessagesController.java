@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.chatapp.api.dto.MessageDTO;
 import com.chatapp.api.dto.MessageRequest;
 import com.chatapp.api.entity.Message;
-import com.chatapp.api.service.ConversationService;
 import com.chatapp.api.service.MessageService;
 
 @RestController
